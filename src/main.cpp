@@ -2,6 +2,7 @@
 #include <arduino_homekit_server.h>
 
 #include <Console.h>
+#include <DigitalOutput.h>
 #include <BuiltinLed.h>
 #include <VictorOTA.h>
 #include <VictorWifi.h>
@@ -19,6 +20,7 @@ TimesCounter times(1000);
 SwitchIO* switchIO;
 String hostName;
 String serialNumber;
+DigitalOutput* light;
 
 extern "C" homekit_characteristic_t switchState;
 extern "C" homekit_characteristic_t accessoryName;
@@ -40,6 +42,7 @@ void setSwitchState(const bool value) {
   switchState.value.bool_value = value;
   homekit_characteristic_notify(&switchState, switchState.value);
   switchIO->setOutputState(value);
+  light->setValue(value);
   console.log()
     .bracket(F("switch"))
     .section(F("state"), toSwitchStateName(value));
@@ -55,6 +58,9 @@ void setup(void) {
 
   builtinLed.setup();
   builtinLed.turnOn();
+
+  light = new DigitalOutput(14, LOW);
+  light->setValue(false);
 
   // setup web
   webPortal.onRequestStart = []() { builtinLed.toggle(); };
