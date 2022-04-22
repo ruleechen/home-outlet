@@ -23,6 +23,7 @@ String serialNumber;
 DigitalOutput* light;
 
 extern "C" homekit_characteristic_t switchState;
+extern "C" homekit_characteristic_t inUseState;
 extern "C" homekit_characteristic_t accessoryName;
 extern "C" homekit_characteristic_t accessorySerialNumber;
 extern "C" homekit_server_config_t serverConfig;
