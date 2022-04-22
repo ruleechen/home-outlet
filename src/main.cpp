@@ -39,6 +39,13 @@ void setOnState(const bool value) {
   console.log().section(F("state"), GlobalHelpers::toOnOffName(value));
 }
 
+void setInUseState(const bool value) {
+  builtinLed.flash();
+  inUseState.value.bool_value = value;
+  homekit_characteristic_notify(&inUseState, inUseState.value);
+  console.log().section(F("in use"), GlobalHelpers::toYesNoName(value));
+}
+
 void setup(void) {
   console.begin(115200);
   if (!LittleFS.begin()) {
@@ -61,6 +68,7 @@ void setup(void) {
     // states
     states.push_back({ .text = F("Service"), .value = VICTOR_ACCESSORY_SERVICE_NAME });
     states.push_back({ .text = F("State"),   .value = GlobalHelpers::toOnOffName(onState.value.bool_value) });
+    states.push_back({ .text = F("In Use"),  .value = GlobalHelpers::toYesNoName(inUseState.value.bool_value) });
     states.push_back({ .text = F("Paired"),  .value = GlobalHelpers::toYesNoName(homekit_is_paired()) });
     states.push_back({ .text = F("Clients"), .value = String(arduino_homekit_connected_clients_count()) });
     // buttons
