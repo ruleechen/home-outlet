@@ -6,7 +6,7 @@
 
 3. Config `data/app.json` with `{"name":"VIC","led":[12,0,1],"wifi":["ssid","pass",1]}`
 
-4. Config `data/switch.json` with `{"pin":[4,5,0,1],"state":[0,0]}`
+4. Config `data/outlet.json` with `{"pin":[4,5,0,1],"state":[0,0]}`
 
 5. Implement led indicator with following code in `main.cpp`
 ```cpp
@@ -18,7 +18,7 @@ void setup(void) {
   light->setValue(false);
 }
 
-void setSwitchState(const bool value) {
+void setOnState(const bool value) {
   light->setValue(value);
 }
 ```
