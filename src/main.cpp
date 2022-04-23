@@ -93,7 +93,7 @@ void setup(void) {
   hostName = victorWifi.getHostName();
   serialNumber = String(VICTOR_ACCESSORY_INFORMATION_SERIAL_NUMBER) + "/" + victorWifi.getHostId();
   accessoryName.value.string_value = const_cast<char*>(hostName.c_str());
-  accessorySerialNumber.value.string_value =const_cast<char*>(serialNumber.c_str());
+  accessorySerialNumber.value.string_value = const_cast<char*>(serialNumber.c_str());
   onState.setter = [](const homekit_value_t value) { setOnState(value.bool_value); };
   arduino_homekit_setup(&serverConfig);
 
