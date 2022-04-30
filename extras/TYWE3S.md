@@ -6,19 +6,4 @@
 
 3. Config `data/app.json` with `{"name":"VIC","led":[12,0,1],"wifi":["ssid","pass",1]}`
 
-4. Config `data/outlet.json` with `{"i":[4,0],"o":[5,1],"state":[0,0]}`
-
-5. Implement led indicator with following code in `main.cpp`
-```cpp
-#include <DigitalOutput.h>
-DigitalOutput* light;
-
-void setup(void) {
-  light = new DigitalOutput(14, LOW);
-  light->setValue(false);
-}
-
-void setOnState(const bool value) {
-  light->setValue(value);
-}
-```
+4. Config `data/outlet.json` with `{"i":[4,0],"o":[5,1],"o2":[14,0],"state":[0,0]}`

@@ -3,7 +3,6 @@
 
 #include <GlobalHelpers.h>
 #include <Console.h>
-#include <DigitalOutput.h>
 #include <BuiltinLed.h>
 #include <VictorOTA.h>
 #include <VictorWifi.h>
@@ -20,7 +19,6 @@ TimesCounter times(1000);
 SwitchIO* switchIO;
 String hostName;
 String serialNumber;
-DigitalOutput* light;
 
 extern "C" homekit_characteristic_t onState;
 extern "C" homekit_characteristic_t inUseState;
@@ -35,7 +33,6 @@ void setOnState(const bool value) {
   onState.value.bool_value = value;
   homekit_characteristic_notify(&onState, onState.value);
   switchIO->setOutputState(value);
-  light->setValue(value);
   console.log().section(F("state"), GlobalHelpers::toOnOffName(value));
 }
 
@@ -56,9 +53,6 @@ void setup(void) {
 
   builtinLed.setup();
   builtinLed.turnOn();
-
-  light = new DigitalOutput(14, LOW);
-  light->setValue(false);
 
   // setup web
   webPortal.onRequestStart = []() { builtinLed.toggle(); };
