@@ -72,6 +72,7 @@ void setup(void) {
   webPortal.onServicePost = [](const String& value) {
     if (value == F("Unpair")) {
       homekit_server_reset();
+      ESP.restart();
     } else if (value == F("Toggle")) {
       setOnState(!onState.value.bool_value);
     }
