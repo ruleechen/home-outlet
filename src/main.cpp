@@ -29,7 +29,6 @@ extern "C" homekit_server_config_t serverConfig;
 void setOnState(const bool value) {
   ESP.wdtFeed();
   builtinLed.flash();
-  times.count();
   onState.value.bool_value = value;
   homekit_characteristic_notify(&onState, onState.value);
   switchIO->setOutputState(value);
@@ -82,7 +81,10 @@ void setup(void) {
   // setup switch io
   const auto storage = new SwitchStorage("/outlet.json");
   switchIO = new SwitchIO(storage);
-  switchIO->onInputChange = setOnState;
+  switchIO->onInputChange = [](const bool value) {
+    setOnState(value);
+    times.count(); // count only for real button click
+  };
 
   // setup homekit server
   hostName = victorWifi.getHostName();
