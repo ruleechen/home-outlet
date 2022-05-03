@@ -53,6 +53,14 @@ void setup(void) {
   builtinLed.setup();
   builtinLed.turnOn();
 
+  // counter
+  times.onCount = [](uint8_t count) {
+    if (count == 10) {
+      homekit_server_reset();
+      ESP.restart();
+    }
+  };
+
   // setup web
   webPortal.onRequestStart = []() { builtinLed.toggle(); };
   webPortal.onRequestEnd = []() { builtinLed.toggle(); };
@@ -78,9 +86,18 @@ void setup(void) {
   };
   webPortal.setup();
 
+  // setup homekit server
+  hostName = victorWifi.getHostName();
+  serialNumber = String(VICTOR_ACCESSORY_INFORMATION_SERIAL_NUMBER) + "/" + victorWifi.getHostId();
+  accessoryName.value.string_value = const_cast<char*>(hostName.c_str());
+  accessorySerialNumber.value.string_value = const_cast<char*>(serialNumber.c_str());
+  onState.setter = [](const homekit_value_t value) { setOnState(value.bool_value); };
+  arduino_homekit_setup(&serverConfig);
+
   // setup switch io
   const auto storage = new SwitchStorage("/switch.json");
   switchIO = new SwitchIO(storage);
+  setOnState(switchIO->getOutputState());
   switchIO->onInputChange = [](const ButtonAction action) {
     if (action == ButtonClick) {
       const auto outputValue = switchIO->getOutputState();
@@ -91,22 +108,6 @@ void setup(void) {
     } else if (action == ButtonRestore) {
       homekit_server_reset();
       ESP.eraseConfig();
-      ESP.restart();
-    }
-  };
-
-  // setup homekit server
-  hostName = victorWifi.getHostName();
-  serialNumber = String(VICTOR_ACCESSORY_INFORMATION_SERIAL_NUMBER) + "/" + victorWifi.getHostId();
-  accessoryName.value.string_value = const_cast<char*>(hostName.c_str());
-  accessorySerialNumber.value.string_value = const_cast<char*>(serialNumber.c_str());
-  onState.setter = [](const homekit_value_t value) { setOnState(value.bool_value); };
-  arduino_homekit_setup(&serverConfig);
-
-  // counter
-  times.onCount = [](uint8_t count) {
-    if (count == 10) {
-      homekit_server_reset();
       ESP.restart();
     }
   };
