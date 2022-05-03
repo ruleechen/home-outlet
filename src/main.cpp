@@ -79,7 +79,7 @@ void setup(void) {
   webPortal.setup();
 
   // setup switch io
-  const auto storage = new SwitchStorage("/outlet.json");
+  const auto storage = new SwitchStorage("/switch.json");
   switchIO = new SwitchIO(storage);
   switchIO->onInputChange = [](const ButtonAction action) {
     if (action == ButtonClick) {
