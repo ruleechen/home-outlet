@@ -6,4 +6,4 @@
 
 3. Config `data/app.json` with `{"name":"VIC","led":[12,0,1],"wifi":["ssid","pass",1]}`
 
-4. Config `data/outlet.json` with `{"i":[4,0],"o":[5,1],"o2":[14,0],"state":[0,0]}`
+4. Config `data/switch.json` with `{"i":[4,0],"o":[5,1],"o2":[14,0],"state":[0,0]}`

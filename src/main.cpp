@@ -98,14 +98,14 @@ void setup(void) {
   const auto storage = new SwitchStorage("/switch.json");
   switchIO = new SwitchIO(storage);
   setOnState(switchIO->getOutputState());
-  switchIO->onInputChange = [](const ButtonAction action) {
-    if (action == ButtonClick) {
+  switchIO->input->onAction = [](const ButtonAction action) {
+    if (action == ButtonActionPressed) {
       const auto outputValue = switchIO->getOutputState();
       setOnState(!outputValue); // toggle
       times.count(); // count only for real button click
-    } else if (action == ButtonRestart) {
+    } else if (action == ButtonActionRestart) {
       ESP.restart();
-    } else if (action == ButtonRestore) {
+    } else if (action == ButtonActionRestore) {
       homekit_server_reset();
       ESP.eraseConfig();
       ESP.restart();
