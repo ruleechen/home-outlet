@@ -52,6 +52,8 @@ void setup(void) {
 
   builtinLed.setup();
   builtinLed.turnOn();
+  victorOTA.setup();
+  victorWifi.setup();
 
   // counter
   times.onCount = [](uint8_t count) {
@@ -64,7 +66,6 @@ void setup(void) {
   // setup web
   webPortal.onRequestStart = []() { builtinLed.toggle(); };
   webPortal.onRequestEnd = []() { builtinLed.toggle(); };
-  webPortal.onRadioEmit = [](uint8_t index) { };
   webPortal.onServiceGet = [](std::vector<TextValueModel>& states, std::vector<TextValueModel>& buttons) {
     // states
     states.push_back({ .text = F("Service"), .value = VICTOR_ACCESSORY_SERVICE_NAME });
@@ -95,8 +96,7 @@ void setup(void) {
   arduino_homekit_setup(&serverConfig);
 
   // setup switch io
-  const auto storage = new SwitchStorage("/switch.json");
-  switchIO = new SwitchIO(storage);
+  switchIO = new SwitchIO("/switch.json");
   setOnState(switchIO->getOutputState());
   switchIO->input->onAction = [](const ButtonAction action) {
     if (action == ButtonActionPressed) {
@@ -111,10 +111,6 @@ void setup(void) {
       ESP.restart();
     }
   };
-
-  // setup wifi
-  victorOTA.setup();
-  victorWifi.setup();
 
   // done
   console.log()
