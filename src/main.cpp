@@ -74,11 +74,11 @@ void setup(void) {
     states.push_back({ .text = F("Paired"),  .value = GlobalHelpers::toYesNoName(homekit_is_paired()) });
     states.push_back({ .text = F("Clients"), .value = String(arduino_homekit_connected_clients_count()) });
     // buttons
-    buttons.push_back({ .text = F("Unpair"), .value = F("Unpair") });
+    buttons.push_back({ .text = F("UnPair"), .value = F("UnPair") });
     buttons.push_back({ .text = F("Toggle"), .value = F("Toggle") });
   };
   webPortal.onServicePost = [](const String& value) {
-    if (value == F("Unpair")) {
+    if (value == F("UnPair")) {
       homekit_server_reset();
       ESP.restart();
     } else if (value == F("Toggle")) {
