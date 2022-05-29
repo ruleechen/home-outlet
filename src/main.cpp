@@ -19,6 +19,7 @@ TimesCounter times(1000);
 SwitchIO* switchIO;
 String hostName;
 String serialNumber;
+bool debugEnabled = false;
 
 extern "C" homekit_characteristic_t onState;
 extern "C" homekit_characteristic_t inUseState;
@@ -99,11 +100,18 @@ void setup(void) {
   switchIO = new SwitchIO("/switch.json");
   setOnState(switchIO->getOutputState());
   switchIO->input->onAction = [](const ButtonAction action) {
+    console.log()
+      .bracket(F("button"))
+      .section(F("action"), String(action));
     if (action == ButtonActionPressed) {
       const auto outputValue = switchIO->getOutputState();
       setOnState(!outputValue); // toggle
     } else if (action == ButtonActionReleased) {
       times.count(); // count only for real button released
+    } else if (action == ButtonActionDoublePressed) {
+      builtinLed.flash(500);
+      debugEnabled = !debugEnabled;
+      victorWifi.enableAP(debugEnabled);
     } else if (action == ButtonActionRestart) {
       ESP.restart();
     } else if (action == ButtonActionRestore) {
