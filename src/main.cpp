@@ -19,7 +19,6 @@ TimesCounter times(1000);
 SwitchIO* switchIO;
 String hostName;
 String serialNumber;
-bool debugEnabled = false;
 
 extern "C" homekit_characteristic_t onState;
 extern "C" homekit_characteristic_t inUseState;
@@ -58,7 +57,7 @@ void setup(void) {
 
   // counter
   times.onCount = [](uint8_t count) {
-    if (count == 18) {
+    if (count == 20) {
       homekit_server_reset();
       ESP.restart();
     }
@@ -110,8 +109,8 @@ void setup(void) {
       times.count(); // count only for real button released
     } else if (action == ButtonActionDoublePressed) {
       builtinLed.flash(500);
-      debugEnabled = !debugEnabled;
-      victorWifi.enableAP(debugEnabled);
+      const auto enable = victorWifi.isLightSleepMode();
+      victorWifi.enableAP(enable); // toggle enabling ap
     } else if (action == ButtonActionRestart) {
       ESP.restart();
     } else if (action == ButtonActionRestore) {
