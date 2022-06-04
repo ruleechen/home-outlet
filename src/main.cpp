@@ -1,30 +1,24 @@
 #include <Arduino.h>
 #include <arduino_homekit_server.h>
 
-#include <GlobalHelpers.h>
-#include <Console.h>
-#include <BuiltinLed.h>
-#include <VictorOTA.h>
-#include <VictorWifi.h>
-#include <VictorWeb.h>
-
+#include <AppMain/AppMain.h>
 #include <TimesCounter.h>
 #include <SwitchIO/SwitchIO.h>
 
 using namespace Victor;
 using namespace Victor::Components;
 
-VictorWeb webPortal(80);
-TimesCounter times(1000);
-SwitchIO* switchIO;
-String hostName;
-String serialNumber;
-
 extern "C" homekit_characteristic_t onState;
 extern "C" homekit_characteristic_t inUseState;
 extern "C" homekit_characteristic_t accessoryName;
 extern "C" homekit_characteristic_t accessorySerialNumber;
 extern "C" homekit_server_config_t serverConfig;
+
+AppMain* appMain;
+TimesCounter times(1000);
+SwitchIO* switchIO;
+String hostName;
+String serialNumber;
 
 void setOnState(const bool value) {
   ESP.wdtFeed();
@@ -43,17 +37,11 @@ void setInUseState(const bool value) {
 }
 
 void setup(void) {
-  console.begin(115200);
-  if (!LittleFS.begin()) {
-    console.error()
-      .bracket(F("fs"))
-      .section(F("mount failed"));
-  }
-
-  builtinLed.setup();
-  builtinLed.turnOn();
-  victorOTA.setup();
-  victorWifi.setup();
+  appMain = new AppMain();
+  appMain->setup({
+    .web = true,
+    .radio = false,
+  });
 
   // counter
   times.onCount = [](uint8_t count) {
@@ -64,9 +52,7 @@ void setup(void) {
   };
 
   // setup web
-  webPortal.onRequestStart = []() { builtinLed.toggle(); };
-  webPortal.onRequestEnd = []() { builtinLed.toggle(); };
-  webPortal.onServiceGet = [](std::vector<TextValueModel>& states, std::vector<TextValueModel>& buttons) {
+  appMain->webPortal->onServiceGet = [](std::vector<TextValueModel>& states, std::vector<TextValueModel>& buttons) {
     // states
     states.push_back({ .text = F("Service"), .value = VICTOR_ACCESSORY_SERVICE_NAME });
     states.push_back({ .text = F("State"),   .value = GlobalHelpers::toOnOffName(onState.value.bool_value) });
@@ -77,7 +63,7 @@ void setup(void) {
     buttons.push_back({ .text = F("UnPair"), .value = F("UnPair") });
     buttons.push_back({ .text = F("Toggle"), .value = F("Toggle") });
   };
-  webPortal.onServicePost = [](const String& value) {
+  appMain->webPortal->onServicePost = [](const String& value) {
     if (value == F("UnPair")) {
       homekit_server_reset();
       ESP.restart();
@@ -85,7 +71,6 @@ void setup(void) {
       setOnState(!onState.value.bool_value);
     }
   };
-  webPortal.setup();
 
   // setup homekit server
   hostName = victorWifi.getHostName();
@@ -126,7 +111,7 @@ void setup(void) {
 }
 
 void loop(void) {
-  arduino_homekit_loop();
-  webPortal.loop();
+  appMain->loop();
   switchIO->loop();
+  arduino_homekit_loop();
 }
