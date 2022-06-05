@@ -13,8 +13,7 @@ homekit_characteristic_t accessoryVersion      = HOMEKIT_CHARACTERISTIC_(FIRMWAR
 homekit_characteristic_t accessoryIdentify     = HOMEKIT_CHARACTERISTIC_(IDENTIFY, onAccessoryIdentify);
 homekit_characteristic_t accessoryName         = HOMEKIT_CHARACTERISTIC_(NAME, VICTOR_ACCESSORY_SERVICE_NAME); // change on setup
 
-homekit_service_t informationService = HOMEKIT_SERVICE_(
-  ACCESSORY_INFORMATION,
+homekit_service_t informationService = HOMEKIT_SERVICE_(ACCESSORY_INFORMATION,
   .primary = false,
   .characteristics = (homekit_characteristic_t*[]) {
     &accessoryManufacturer,
@@ -34,8 +33,7 @@ homekit_characteristic_t inUseState = HOMEKIT_CHARACTERISTIC_(OUTLET_IN_USE, fal
 // format: string; HAP section 9.62; maximum length 64
 homekit_characteristic_t nameState = HOMEKIT_CHARACTERISTIC_(NAME, "Outlet");
 
-homekit_service_t stateService = HOMEKIT_SERVICE_(
-  OUTLET,
+homekit_service_t stateService = HOMEKIT_SERVICE_(OUTLET,
   .primary = true,
   .characteristics = (homekit_characteristic_t*[]) {
     &onState,
