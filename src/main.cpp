@@ -3,7 +3,7 @@
 
 #include <AppMain/AppMain.h>
 #include <GlobalHelpers.h>
-#include <TimesCounter.h>
+#include <Timer/TimesCounter.h>
 #include <SwitchIO/SwitchIO.h>
 
 using namespace Victor;
@@ -85,18 +85,18 @@ void setup(void) {
     console.log()
       .bracket(F("button"))
       .section(F("action"), String(action));
-    if (action == ButtonActionPressed) {
+    if (action == BUTTON_ACTION_PRESSED) {
       const auto outputValue = switchIO->getOutputState();
       setOnState(!outputValue); // toggle
-    } else if (action == ButtonActionReleased) {
+    } else if (action == BUTTON_ACTION_RELEASED) {
       times.count(); // count only for real button released
-    } else if (action == ButtonActionDoublePressed) {
+    } else if (action == BUTTON_ACTION_DOUBLE_PRESSED) {
       builtinLed.flash(500);
       const auto enable = victorWifi.isLightSleepMode();
       victorWifi.enableAP(enable); // toggle enabling ap
-    } else if (action == ButtonActionRestart) {
+    } else if (action == BUTTON_ACTION_RESTART) {
       ESP.restart();
-    } else if (action == ButtonActionRestore) {
+    } else if (action == BUTTON_ACTION_RESTORE) {
       homekit_server_reset();
       ESP.restart();
     }
