@@ -101,9 +101,9 @@ void setup(void) {
       builtinLed.flash(500);
       const auto enable = victorWifi.isLightSleepMode();
       victorWifi.enableAP(enable); // toggle enabling ap
-    } else if (action == BUTTON_ACTION_RESTART) {
+    } else if (action == BUTTON_ACTION_PRESSED_HOLD_L1) {
       ESP.restart();
-    } else if (action == BUTTON_ACTION_RESTORE) {
+    } else if (action == BUTTON_ACTION_PRESSED_HOLD_L2) {
       homekit_server_reset();
       ESP.restart();
     }
